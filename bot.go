@@ -3,17 +3,25 @@ package main
 import (
 	"io/ioutil"
 	"log"
-
+	"strings"
 	"github.com/Philipp15b/go-steam"
 	"github.com/Philipp15b/go-steam/internal/steamlang"
 	"github.com/Philipp15b/go-steam/tradeoffer"
 )
 
+func getCredentials() (username, password, authcode string){
+	dat, err := ioutil.ReadFile("./credentials")
+	if (err != nil) {
+		return "", "", ""
+	}
+	creds := strings.Split(string(dat), "\n")
+	return creds[0], creds[1], creds[2]
+
+}
+
 func main() {
 	myLoginInfo := new(steam.LogOnDetails)
-	myLoginInfo.Username = ""
-	myLoginInfo.Password = ""
-	myLoginInfo.AuthCode = "3XYXX"
+	myLoginInfo.Username, myLoginInfo.Password, myLoginInfo.AuthCode = getCredentials()
 	hash, _ := ioutil.ReadFile("sentry")
 	myLoginInfo.SentryFileHash = steam.SentryHash(hash)
 	client := steam.NewClient()
